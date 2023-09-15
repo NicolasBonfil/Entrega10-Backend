@@ -13,7 +13,7 @@ class TicketRepository{
                 customError.createError({
                     name: "Error al crear el ticket",
                     cause: existingTicket(code),
-                    message: "Fallo en el intento de en el intento de crear el ticket",
+                    message: "Ya existe un ticket con ese codigo",
                     code: EError.NOT_FOUND
                 })
             }
@@ -21,27 +21,27 @@ class TicketRepository{
 
             if(!email){
                 customError.createError({
-                    name: "La informacion esta incompleta",
+                    name: "Error al crear el ticket",
                     cause: missingDataError("Email"),
-                    message: "Fallo en el intento de en el intento de crear el ticket",
+                    message: "La informacion del email no esta completa",
                     code: EError.INVALID_TYPES_ERROR
                 })
             }
 
             if(!amount){
                 customError.createError({
-                    name: "La informacion esta incompleta",
+                    name: "Error al crear el ticket",
                     cause: missingDataError("Precio total"),
-                    message: "Fallo en el intento de en el intento de crear el ticket",
+                    message: "La informacion del precio total no esta completa",
                     code: EError.INVALID_TYPES_ERROR
                 })
             }
 
             if(!code){
                 customError.createError({
-                    name: "La informacion esta incompleta",
+                    name: "Error al crear el ticket",
                     cause: missingDataError("Codigo del ticket"),
-                    message: "Fallo en el intento de en el intento de crear el ticket",
+                    message: "La informacion del codigo del ticket no esta completa",
                     code: EError.INVALID_TYPES_ERROR
                 })
             }
@@ -49,7 +49,7 @@ class TicketRepository{
             customError.createError({
                 name: "Error al crear el ticket",
                 cause: dataBaseError(error),
-                message: "Fallo en el intento de en el intento de crear el ticket",
+                message: error.message,
                 code: EError.DATABASE_ERROR
             })
             
@@ -63,7 +63,7 @@ class TicketRepository{
             customError.createError({
                 name: "Error al obtener los tickets",
                 cause: dataBaseError(Error),
-                message: "Fallo en el intento de en el intento de obtener los tickets",
+                message: error.message,
                 code: EError.DATABASE_ERROR
             })
         }

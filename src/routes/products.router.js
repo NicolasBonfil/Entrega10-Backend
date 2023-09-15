@@ -16,7 +16,7 @@ const authMidUser = [
 class ProductRouter{
     constructor(){
         this.InicioProduct = Router()
-        this.InicioProduct.get("/", authMidUser, productController.getProducts)
+        this.InicioProduct.get("/", passportControl("jwt"), productController.getProducts)
         this.InicioProduct.get("/:id", productController.getProductById)
         this.InicioProduct.post("/", authMidAdmin, productController.addProduct)
         this.InicioProduct.put("/:pid", authMidAdmin, productController.updateProduct)

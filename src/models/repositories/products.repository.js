@@ -11,7 +11,7 @@ class ProductsRepository{
             customError.createError({
                 name: "Error al obtener los productos",
                 cause: dataBaseError(error),
-                message: "Fallo en el intento de en el intento de obtener los productos",
+                message: "Ocurrio un error en el servidor",
                 code: EError.DATABASE_ERROR
             })
         }
@@ -23,9 +23,9 @@ class ProductsRepository{
         } catch (error) {
             if(!id){
                 customError.createError({
-                    name: "La informacion esta incompleta",
+                    name: "Error al obtener el producto",
                     cause: missingDataError("Id del producto"),
-                    message: "Fallo en el intento de obtener el producto",
+                    message: "La informacion del id del producto esta incompleta",
                     code: EError.INVALID_TYPES_ERROR
                 })
             }
@@ -36,7 +36,7 @@ class ProductsRepository{
                 customError.createError({
                     name: "Error al obtener el producto",
                     cause: nonexistentProduct(id),
-                    message: "Fallo en el intento de obtener el producto",
+                    message: "Producto inexistente",
                     code: EError.NOT_FOUND
                 })
             }
@@ -44,7 +44,7 @@ class ProductsRepository{
             customError.createError({
                 name: "Error al obtener el producto",
                 cause: dataBaseError(error),
-                message: "Fallo en el intento de en el intento de obtener el producto",
+                message: "Ocurrio un error en el servidor",
                 code: EError.DATABASE_ERROR
             })
         }
@@ -56,21 +56,67 @@ class ProductsRepository{
         } catch (error) {
             const products = await productsDAO.getLeanProducts()
 
-            if(!products){
+            if(!product){
                 customError.createError({
                     name: "Error al agregar el producto",
                     cause: missingDataError("Producto"),
-                    message: "Fallo en el intento de agregar el producto",
+                    message: "La informacion del producto esta incompleta",
+                    code: EError.INVALID_TYPES_ERROR
+                })
+            }
+
+            if(!product.title){
+                customError.createError({
+                    name: "Error al agregar el producto",
+                    cause: missingDataError("Nombre del producto"),
+                    message: "La informacion del nombre del producto esta incompleta",
+                    code: EError.INVALID_TYPES_ERROR
+                })
+            }
+
+            if(!product.description){
+                customError.createError({
+                    name: "Error al agregar el producto",
+                    cause: missingDataError("Descripción del producto"),
+                    message: "La informacion de la descripcion producto esta incompleta",
+                    code: EError.INVALID_TYPES_ERROR
+                })
+            }
+
+            if(!product.price){
+                customError.createError({
+                    name: "Error al agregar el producto",
+                    cause: missingDataError("Precio del producto"),
+                    message: "La informacion del precio del producto esta incompleta",
+                    code: EError.INVALID_TYPES_ERROR
+                })
+            }
+
+            if(!product.code){
+                customError.createError({
+                    name: "Error al agregar el producto",
+                    cause: missingDataError("Codigo del producto"),
+                    message: "La informacion del codigo del producto esta incompleta",
+                    code: EError.INVALID_TYPES_ERROR
+                })
+            }
+
+            if(!product.category){
+                customError.createError({
+                    name: "Error al agregar el producto",
+                    cause: missingDataError("Categoria del producto"),
+                    message: "La informacion de la categoria del producto esta incompleta",
                     code: EError.INVALID_TYPES_ERROR
                 })
             }
 
             const existsProduct = products.find(p => p.code == product.code)
+            console.log(existsProduct);
             if(existsProduct){
                 customError.createError({
                     name: "Error al agregar el producto",
                     cause: existingProduct(product.code),
-                    message: "Fallo en el intento de agregar el producto",
+                    message: "Ya existe un producto con ese codigo",
                     code: EError.INVALID_TYPES_ERROR
                 })
             }
@@ -78,7 +124,7 @@ class ProductsRepository{
             customError.createError({
                 name: "Error al agregar el producto",
                 cause: dataBaseError(error),
-                message: "Fallo en el intento de en el intento de agregar el producto",
+                message: "Ocurrio un error en el servidor",
                 code: EError.DATABASE_ERROR
             })
         }
@@ -90,18 +136,18 @@ class ProductsRepository{
         } catch (error) {
             if(!pid){
                 customError.createError({
-                    name: "La informacion esta incompleta",
+                    name: "Error al actualizar el producto",
                     cause: missingDataError("Id del producto"),
-                    message: "Fallo en el intento de actualizar el producto",
+                    message: "La informacion del id del producto esta incompleta",
                     code: EError.INVALID_TYPES_ERROR
                 })
             }
 
             if(!datosActualizados){
                 customError.createError({
-                    name: "La informacion esta incompleta",
+                    name: "Error al actualizar el producto",
                     cause: missingDataError("Datos del producto"),
-                    message: "Fallo en el intento de actualizar el producto",
+                    message: "La informacion de los datos del producto esta incompleta",
                     code: EError.INVALID_TYPES_ERROR
                 })
             }
@@ -112,7 +158,7 @@ class ProductsRepository{
                 customError.createError({
                     name: "Error al actualizar el producto",
                     cause: existingProduct(datosActualizados.code),
-                    message: "Fallo en el intento de actualizar el producto",
+                    message: "Ya existe un producto con ese codigo",
                     code: EError.INVALID_TYPES_ERROR
                 })
             }
@@ -120,9 +166,9 @@ class ProductsRepository{
             const product = products.find(p => p._id == pid)
             if(!product){
                 customError.createError({
-                    name: "Error al obtener el producto",
+                    name: "Error al actualizar el producto",
                     cause: nonexistentProduct(pid),
-                    message: "Fallo en el intento de actualizar el producto",
+                    message: "Producto inexistente",
                     code: EError.NOT_FOUND
                 })
             }
@@ -130,7 +176,7 @@ class ProductsRepository{
             customError.createError({
                 name: "Error al actualizar el producto",
                 cause: dataBaseError(error),
-                message: "Fallo en el intento de en el intento de actualizar el producto",
+                message: "Ocurrio un error en el servidor",
                 code: EError.DATABASE_ERROR
             })
         }
@@ -142,9 +188,9 @@ class ProductsRepository{
         } catch (error) {
             if(!pid){
                 customError.createError({
-                    name: "La informacion esta incompleta",
+                    name: "Error al eliminar el producto",
                     cause: missingDataError("Id del producto"),
-                    message: "Fallo en el intento de eliminar el producto",
+                    message: "La informacion del id del producto esta incompleta",
                     code: EError.INVALID_TYPES_ERROR
                 })
             }
@@ -153,9 +199,9 @@ class ProductsRepository{
             const product = products.find(p => p._id == pid)
             if(!product){
                 customError.createError({
-                    name: "Error al obtener el producto",
+                    name: "Error al eliminar el producto",
                     cause: nonexistentProduct(pid),
-                    message: "Fallo en el intento de eliminar el producto",
+                    message: "Producto inexistente",
                     code: EError.NOT_FOUND
                 })
             }
@@ -163,7 +209,7 @@ class ProductsRepository{
             customError.createError({
                 name: "Error al eliminar el producto",
                 cause: dataBaseError(error),
-                message: "Fallo en el intento de en el intento de eliminar el producto",
+                message: "Ocurrio un error en el servidor",
                 code: EError.DATABASE_ERROR
             })
         }

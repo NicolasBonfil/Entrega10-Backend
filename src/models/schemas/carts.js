@@ -13,6 +13,7 @@ const cartsSchema = new mongoose.Schema({
                 }
             }
         ],
+        required: true,
         default: []
     }
 })

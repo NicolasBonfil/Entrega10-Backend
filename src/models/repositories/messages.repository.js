@@ -11,7 +11,7 @@ class MessagesRepository{
             return customError.createError({
                 name: "Error al obtener los mensajes",
                 cause: dataBaseError(error),
-                message: "Fallo en el intento de obtener los mensajes",
+                message: error.message,
                 code: EError.DATABASE_ERROR
             })
         }
@@ -23,18 +23,18 @@ class MessagesRepository{
         } catch (error) {
             if(!user){
                 return customError.createError({
-                    name: "La informacion esta incompleta",
+                    name: "Error al crear un mensaje",
                     cause: missingDataError("Nombre de usuario"),
-                    message: "Fallo en el intento de crear un mensaje",
+                    message: "La informacion del nombre de usuario no esta completa",
                     code: EError.INVALID_TYPES_ERROR
                 })
             }
 
             if(!message){
                 return customError.createError({
-                    name: "La informacion esta incompleta",
+                    name: "Error al crear un mensaje",
                     cause: missingDataError("Mensaje"),
-                    message: "Fallo en el intento de crear un mensaje",
+                    message: "La informacion del mensaje no esta completa",
                     code: EError.INVALID_TYPES_ERROR
                 })
             }
@@ -42,7 +42,7 @@ class MessagesRepository{
             return customError.createError({
                 name: "Error al crear un mensaje",
                 cause: dataBaseError(error),
-                message: "Fallo en el intento de crear un mensajes",
+                message: error.message,
                 code: EError.DATABASE_ERROR
             })
         }

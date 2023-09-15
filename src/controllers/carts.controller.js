@@ -23,10 +23,10 @@ class CartController{
         try {
             const usuario = await usersModel.findOne({email: req.user.email})
             
-            if(usuario.cart){
-                return res.send({status: "error", error: "El usuario ya tiene un carrito"})
-            }
-            const newCart = await cartsRepository.createCart()
+            // if(usuario.cart){
+            //     return res.send({status: "error", error: "El usuario ya tiene un carrito"})
+            // }
+            const newCart = await cartsRepository.createCart(usuario.cart)
 
             await usersModel.updateOne({email: req.user.email}, {$set: {cart: newCart}})
 

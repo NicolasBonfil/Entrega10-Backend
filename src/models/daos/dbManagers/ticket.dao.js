@@ -2,12 +2,8 @@ import ticketModel from "../../schemas/ticket.js";
 
 class TicketDAO{
     getTicket = async(code) => {
-        try {
-            const ticket = await ticketModel.findOne({code: code});
-            return ticket
-        } catch (error) {
-            return error
-        }
+        const ticket = await ticketModel.findOne({code: code});
+        return ticket
     }
 
     createTicket = async(email, amount, code) => {
@@ -17,12 +13,8 @@ class TicketDAO{
             purchaser: email
         }
 
-        try {
-            let result = await ticketModel.create(ticket)
-            return result
-        } catch (error) {
-            return error;
-        }
+        let result = await ticketModel.create(ticket)
+        return result
     }
 }
 

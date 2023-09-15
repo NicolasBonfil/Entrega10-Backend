@@ -40,10 +40,7 @@ class ProductController{
 
     async addProduct(req, res, next){
         const {title, description, price, code, stock, category, thumbnail} = req.body
-        if(!title || !description || !price || !code || !category){
-            throw new HttpError("Faltan datos", HTTP_STATUS.BAD_REQUEST)
-        }
-
+    
         try {
             let product = {
                 title,
@@ -57,7 +54,7 @@ class ProductController{
         
             const newProduct = await productRepository.addProduct(product)
             const response = successResponse(newProduct)
-            res.status(HTTP_STATUS.OK).send(newProduct)
+            res.status(HTTP_STATUS.OK).send(response)
         } catch (error) {
             next(error)
         }

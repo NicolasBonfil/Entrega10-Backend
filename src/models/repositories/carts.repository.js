@@ -11,9 +11,9 @@ class CartsRepository{
         } catch (error){
             if(!cid){
                 customError.createError({
-                    name: "La informacion esta incompleta",
+                    name: "Error al obtener los productos del carrito",
                     cause: missingDataError("Id del carrito"),
-                    message: "Fallo en el intento de obtener el carrito",
+                    message: "La informacion del id del carrito esta incompleta",
                     code: EError.INVALID_TYPES_ERROR
                 })
             }
@@ -21,30 +21,39 @@ class CartsRepository{
             const cart = await cartsModel.findOne({_id: cid})
             if(!cart){
                 customError.createError({
-                    name: "Error al obtener el carrito",
+                    name: "Error al obtener los productos del carrito",
                     cause: nonExistentCart(cid),
-                    message: "Fallo en el intento de obtener el carrito solicitado",
+                    message: "Carrito inexistente",
                     code: EError.NOT_FOUND
                 })
             }
 
             customError.createError({
-                name: "Error al obtener el carrito",
+                name: "Error al obtener los productos del carrito",
                 cause: dataBaseError(error),
-                message: "Fallo en el intento de obtener el carrito",
+                message: error.message,
                 code: EError.DATABASE_ERROR
             })
         }
     }
 
-    async createCart(){
+    async createCart(cart){
         try {
-            return await cartsDAO.createCart()
+            return await cartsDAO.createCart(cart)
         } catch (error) {
+            if(cart){
+                customError.createError({
+                    name: "Error al crear el carrito",
+                    cause: dataBaseError(error),
+                    message: `El usuario ya tiene un carrito asignado id: ${cart._id}`,
+                    code: EError.DATABASE_ERROR
+                })
+            }
+
             customError.createError({
                 name: "Error al crear el carrito",
                 cause: dataBaseError(error),
-                message: "Fallo en el intento de crear el carrito",
+                message: error.message,
                 code: EError.DATABASE_ERROR
             })
         }
@@ -56,18 +65,18 @@ class CartsRepository{
         } catch (error) {
             if(!cid){
                 customError.createError({
-                    name: "La informacion esta incompleta",
+                    name: "Error al agregar el producto al carrito",
                     cause: missingDataError("Id del carrito"),
-                    message: "Fallo en el intento de agregar el producto al carrito",
+                    message: "La informacion del id del carrito esta incompleta",
                     code: EError.INVALID_TYPES_ERROR
                 })
             }
 
             if(!pid){
                 customError.createError({
-                    name: "La informacion esta incompleta",
+                    name: "Error al agregar el producto al carrito",
                     cause: missingDataError("Id del producto"),
-                    message: "Fallo en el intento de agregar el producto al carrito",
+                    message: "La informacion del id del producto esta incompleta",
                     code: EError.INVALID_TYPES_ERROR
                 })
             }
@@ -75,9 +84,9 @@ class CartsRepository{
             const cart = await cartsModel.findOne({_id: cid})
             if(!cart){
                 customError.createError({
-                    name: "Error al obtener el carrito",
+                    name: "Error al agregar el producto al carrito",
                     cause: nonExistentCart(cid),
-                    message: "Fallo en el intento de agregar el producto al carrito",
+                    message: "Carrito inexistente",
                     code: EError.NOT_FOUND
                 })
             }
@@ -85,7 +94,7 @@ class CartsRepository{
             customError.createError({
                 name: "Error al agregar el producto al carrito",
                 cause: dataBaseError(error),
-                message: "Fallo en el intento de agregar el producto al carrito",
+                message: error.message,
                 code: EError.DATABASE_ERROR
             })
         }
@@ -97,27 +106,27 @@ class CartsRepository{
         } catch (error) {
             if(!cid){
                 customError.createError({
-                    name: "La informacion esta incompleta",
+                    name: "Error al eliminar el producto del carrito",
                     cause: missingDataError("Id del carrito"),
-                    message: "Fallo en el intento de eliminar el producto del carrito",
+                    message: "La informacion del id del carrito esta incompleta",
                     code: EError.INVALID_TYPES_ERROR
                 })
             }
 
             if(!pid){
                 customError.createError({
-                    name: "La informacion esta incompleta",
+                    name: "Error al eliminar el producto del carrito",
                     cause: missingDataError("Id del producto"),
-                    message: "Fallo en el intento de eliminar el producto del carrito",
+                    message: "La informacion del id del producto esta incompleta",
                     code: EError.INVALID_TYPES_ERROR
                 })
             }
 
             if(!cart){
                 customError.createError({
-                    name: "Error al obtener el carrito",
+                    name: "Error al eliminar el producto del carrito",
                     cause: nonExistentCart(cid),
-                    message: "Fallo en el intento de eliminar el producto del carrito",
+                    message: "Carrito inexistente",
                     code: EError.NOT_FOUND
                 })
             }
@@ -125,9 +134,9 @@ class CartsRepository{
             const productIndex = cart.productsInCart.findIndex(p => p.product._id == pid);
             if(productIndex === -1){
                 customError.createError({
-                    name: "Error al obtener el producto solicitado",
+                    name: "Error al eliminar el producto del carrito",
                     cause: nonexistentProduct(pid),
-                    message: "Fallo en el intento de eliminar el producto del carrito",
+                    message: "Producto inexistente",
                     code: EError.NOT_FOUND
                 })
             }
@@ -135,7 +144,7 @@ class CartsRepository{
             customError.createError({
                 name: "Error al eliminar el producto del carrito",
                 cause: dataBaseError(error),
-                message: "Fallo en el intento de en el intento de eliminar el producto del carrito",
+                message: error.message,
                 code: EError.DATABASE_ERROR
             })
         }
@@ -147,18 +156,18 @@ class CartsRepository{
         } catch (error) {
             if(!cid){
                 customError.createError({
-                    name: "La informacion esta incompleta",
+                    name: "Error al actualizar los productos del carrito",
                     cause: missingDataError("Id del carrito"),
-                    message: "Fallo en el intento de actualizar los productos del carrito",
+                    message: "La informacion del id del carrito esta incompleta",
                     code: EError.INVALID_TYPES_ERROR
                 })
             }
 
             if(!products){
                 customError.createError({
-                    name: "La informacion esta incompleta",
+                    name: "Error al actualizar los productos del carrito",
                     cause: missingDataError("Productos"),
-                    message: "Fallo en el intento de actualizar los productos del carrito",
+                    message: "La informacion de los productos esta incompleta",
                     code: EError.INVALID_TYPES_ERROR
                 })
             }
@@ -166,18 +175,18 @@ class CartsRepository{
             products.forEach(p => {
                 if(!p.product._id){
                     customError.createError({
-                        name: "La informacion esta incompleta",
+                        name: "Error al actualizar los productos del carrito",
                         cause: missingDataError("Id del producto"),
-                        message: "Fallo en el intento de actualizar los productos del carrito",
+                        message: "La informacion del id del producto esta incompleta",
                         code: EError.INVALID_TYPES_ERROR
                     })
                 }
 
                 if(!p.quantity){
                     customError.createError({
-                        name: "La informacion esta incompleta",
+                        name: "Error al actualizar los productos del carrito",
                         cause: missingDataError("Cantidad del producto"),
-                        message: "Fallo en el intento de actualizar los productos del carrito",
+                        message: "La informacion de la cantidad del producto esta incompleta",
                         code: EError.INVALID_TYPES_ERROR
                     })
                 }
@@ -186,9 +195,9 @@ class CartsRepository{
             const cart = await cartsModel.findOne({_id: cid})
             if(!cart){
                 customError.createError({
-                    name: "Error al obtener el carrito",
+                    name: "Error al actualizar los productos del carrito",
                     cause: nonExistentCart(cid),
-                    message: "Fallo en el intento de actualizar los productos del carrito",
+                    message: "Carrito inexistente",
                     code: EError.NOT_FOUND
                 })
             }
@@ -196,7 +205,7 @@ class CartsRepository{
             customError.createError({
                 name: "Error al actualizar los productos del carrito",
                 cause: dataBaseError(error),
-                message: "Fallo en el intento de en el intento de actualizar los productos del carrito",
+                message: error.message,
                 code: EError.DATABASE_ERROR
             })
         }
@@ -208,27 +217,27 @@ class CartsRepository{
         } catch (error) {
             if(!cid){
                 customError.createError({
-                    name: "La informacion esta incompleta",
+                    name: "Error al actualizar la cantidad del producto en el carrito",
                     cause: missingDataError("Id del carrito"),
-                    message: "Fallo en el intento de actualizar la cantidad del producto en el carrito",
+                    message: "La informacion del id del carrito esta incompleta",
                     code: EError.INVALID_TYPES_ERROR
                 })
             }
 
             if(!pid){
                 customError.createError({
-                    name: "La informacion esta incompleta",
+                    name: "Error al actualizar la cantidad del producto en el carrito",
                     cause: missingDataError("Id del producto"),
-                    message: "Fallo en el intento de actualizar la cantidad del producto en el carrito",
+                    message: "La informacion del id del producto esta incompleta",
                     code: EError.INVALID_TYPES_ERROR
                 })
             }
 
             if(!quantity){
                 customError.createError({
-                    name: "La informacion esta incompleta",
+                    name: "Error al actualizar la cantidad del producto en el carrito",
                     cause: missingDataError("Cantidad del producto"),
-                    message: "Fallo en el intento de actualizar la cantidad del producto en el carrito",
+                    message: "La informacion de la cantidad del producto esta incompleta",
                     code: EError.INVALID_TYPES_ERROR
                 })
             }
@@ -236,9 +245,9 @@ class CartsRepository{
             const cart = await cartsModel.findOne({_id: cid})
             if(!cart){
                 customError.createError({
-                    name: "Error al obtener el carrito",
+                    name: "Error al actualizar la cantidad del producto en el carrito",
                     cause: nonExistentCart(cid),
-                    message: "Fallo en el intento de actualizar la cantidad del producto en el carrito",
+                    message: "Carrito inexistente",
                     code: EError.NOT_FOUND
                 })
             }
@@ -246,9 +255,9 @@ class CartsRepository{
             const productIndex = cart.productsInCart.findIndex(p => p.product._id == pid);
             if(productIndex === -1){
                 customError.createError({
-                    name: "Error al obtener el producto solicitado",
+                    name: "Error al actualizar la cantidad del producto en el carrito",
                     cause: nonexistentProduct(pid),
-                    message: "Fallo en el intento de actualizar la cantidad del producto en el carrito",
+                    message: "Producto inexistente",
                     code: EError.NOT_FOUND
                 })
             }
@@ -256,9 +265,9 @@ class CartsRepository{
 
             if (!(Number.isInteger(quantity)) || typeof quantity !== "number" || quantity <= 0){
                 customError.createError({
-                    name: "El tipo de dato de la informacion es invalido",
+                    name: "Error al actualizar la cantidad del producto en el carrito",
                     cause: invalidData(quantity),
-                    message: "Fallo en el intento de actualizar la cantidad del producto en el carrito",
+                    message: "El tipo de dato es invalido",
                     code: EError.INVALID_TYPES_ERROR
                 })
             }
@@ -266,7 +275,7 @@ class CartsRepository{
             customError.createError({
                 name: "Error al actualizar la cantidad del producto en el carrito",
                 cause: dataBaseError(error),
-                message: "Fallo en el intento de en el intento de actualizar la cantidad del producto en el carrito",
+                message: error.message,
                 code: EError.DATABASE_ERROR
             })
         }
@@ -278,9 +287,9 @@ class CartsRepository{
         } catch (error) {
             if(!cid){
                 customError.createError({
-                    name: "La informacion esta incompleta",
+                    name: "Error al eliminar los productos del carrito",
                     cause: missingDataError("Id del carrito"),
-                    message: "Fallo en el intento de eliminar los productos del carrito",
+                    message: "La informacion del id del carrito esta incompleta",
                     code: EError.INVALID_TYPES_ERROR
                 })
             }
@@ -290,7 +299,7 @@ class CartsRepository{
                 customError.createError({
                     name: "Error al obtener el carrito",
                     cause: nonExistentCart(cid),
-                    message: "Fallo en el intento de eliminar los productos del carrito",
+                    message: "Carrito inexistente",
                     code: EError.NOT_FOUND
                 })
             }
@@ -298,7 +307,7 @@ class CartsRepository{
             customError.createError({
                 name: "Error al eliminar los productos del carrito",
                 cause: dataBaseError(error),
-                message: "Fallo en el intento de en el intento de eliminar los productos del carrito",
+                message: error.message,
                 code: EError.DATABASE_ERROR
             })
         }

@@ -5,6 +5,10 @@ import { generateToken } from "../utils/token.js"
 import { createHash } from "../utils/password.js"
 import passportControl from "../middlewares/passport-control.middleware.js"
 import auth from "../middlewares/auth.middlewares.js"
+import { HTTP_STATUS, successResponse } from "../utils/responses.js"
+import EError from "../errors/num.js"
+import customError from "../errors/customError.js"
+import { missingDataError } from "../errors/info.js"
 
 const authMid = [
     passportControl("jwt"),
@@ -14,7 +18,7 @@ const authMid = [
 const router = Router()
 
 router.post("/register", passport.authenticate("register", {passReqToCallback: true, session: false, failureRedirect: "/api/session/failedRegister", failureMessage: true}), (req, res) => {
-    res.status(200).send({status: "success", message: "Usuario registrado", payload: req.user._id})
+    res.status(HTTP_STATUS.OK).send({status: "success", message: "Usuario registrado", payload: req.user._id})
 })
 
 router.post("/login", passport.authenticate("login", {passReqToCallback: true, session: false, failureRedirect: "/api/session/failedLogin", failureMessage: true}), (req, res) => {
@@ -25,34 +29,56 @@ router.post("/login", passport.authenticate("login", {passReqToCallback: true, s
         maxAge: 60*60*1000,
         httpOnly: true
     })
-    res.status(200).send({status:"success", payload: user})
+    res.status(HTTP_STATUS.OK).send({status:"success", payload: user})
 })
 
 router.get("/failedRegister", (req, res) => {
-    console.log("error");
-    res.status(400).send({message: "Failed register"})
+    res.status(HTTP_STATUS.SERVER_ERROR).send({message: "Failed register"})
 })
 
 router.get("/failedLogin", (req, res) => {
-    console.log("error");
-    res.status(400).send({message: "Failed login"})
+    res.status(HTTP_STATUS.SERVER_ERROR).send({message: "Failed login"})
 })
 
 router.post("/resetPassword", async (req, res) => {
     const {email, password} = req.body
-    if(!email || !password) return res.status(400).send({status: "error", error: "Error user"})
-    const user = await userModel.findOne({email})
-    if(!user) return res.status(400).send({status: "error", error: "Error userr"})
+    if(!email){
+        customError.createError({
+            name: "Error al resetear la contraseña",
+            cause: missingDataError("Usuario"),
+            message: "La informacion del usuario esta incompleta",
+            code: EError.INVALID_TYPES_ERROR
+        })
+    }
 
+    if(!password){
+        customError.createError({
+            name: "Error al resetear la contraseña",
+            cause: missingDataError("Contraseña"),
+            message: "La informacion de la contraseña esta incompleta",
+            code: EError.INVALID_TYPES_ERROR
+        })
+    }
+
+    const user = await userModel.findOne({email})
+    if(!user){
+        customError.createError({
+            name: "Error al resetear la contraseña",
+            cause: "Usuario no encontrado",
+            message: "Usuario inexistente",
+            code: EError.NOT_FOUND
+        })
+    }
     user.password = createHash(password)
 
     const result = await userModel.updateOne({email:email}, user)
-    res.status(200).send({payload: result})
+    const response = successResponse(result)
+    res.status(HTTP_STATUS.OK).send(response)
 })
 
 
 router.get("/github", passport.authenticate("github", {scope: ["user: email"]})),async (req, res) => {
-    res.status(200).send("Usuario logueado con GitHub")
+    res.status(HTTP_STATUS.OK).send("Usuario logueado con GitHub")
 }
 
 router.get("/githubCallback", passport.authenticate("github", {failureRedirect: "/login"})),async (req, res) => {
@@ -71,7 +97,7 @@ router.post("/logout", (req, res, next) => {
                 })
             }
             res.clearCookie("CoderCookie")
-            res.send("Logout")
+            res.status(HTTP_STATUS.OK).send("Logout")
         } catch (error) {
             next(error)
         }
