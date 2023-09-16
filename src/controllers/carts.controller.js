@@ -143,11 +143,10 @@ class CartController{
             await userModel.updateOne({email: req.user.email}, user)
 
             if(amount > 0){
-                const ticket = await ticketRepository.createTicket(req.user.email, amount, req.user.cart._id)
+                const ticket = await ticketRepository.createTicket(req.user.email, amount)
                 const response = successResponse(ticket)
                 console.log(notPurchased);
 
-                console.log(response);
                 return res.status(HTTP_STATUS.CREATED).send(response)
             }
         }catch (error){

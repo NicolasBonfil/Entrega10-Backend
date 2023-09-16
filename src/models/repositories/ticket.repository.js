@@ -4,9 +4,9 @@ import EError from "../../errors/num.js";
 import ticketDao from "../daos/dbManagers/ticket.dao.js"; 
 
 class TicketRepository{
-    async createTicket(email, amount, code){
+    async createTicket(email, amount){
         try {
-            return await ticketDao.createTicket(email, amount, code)
+            return await ticketDao.createTicket(email, amount)
         } catch (error) {
             const ticket = await ticketDao.getTicket(code)
             if(ticket){

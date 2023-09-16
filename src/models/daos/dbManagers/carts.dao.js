@@ -53,8 +53,6 @@ class CartDAO{
         const cart = await cartsModel.findOne({_id: cid})
 
         products.forEach(p => {
-            //if(!p.product._id || !p.quantity) return error  
-            
             let id = p.product._id
             let quantity = p.quantity
             if(productsToAdd.find(prod => prod.product._id == id)){

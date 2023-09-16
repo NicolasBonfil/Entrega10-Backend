@@ -1,6 +1,7 @@
 import customError from "../../errors/customError.js"
 import { dataBaseError, existingProduct, missingDataError, nonexistentProduct } from "../../errors/info.js"
 import EError from "../../errors/num.js"
+import { generateProducts } from "../../utils/mocks.utils.js"
 import productsDAO from "../daos/dbManagers/products.dao.js"
 
 class ProductsRepository{
@@ -111,7 +112,6 @@ class ProductsRepository{
             }
 
             const existsProduct = products.find(p => p.code == product.code)
-            console.log(existsProduct);
             if(existsProduct){
                 customError.createError({
                     name: "Error al agregar el producto",
@@ -214,6 +214,21 @@ class ProductsRepository{
             })
         }
     }
+    
+    async mockingProducts(total) {
+        try {
+            const products = Array.from({length: total}, () => generateProducts())
+            return products;
+        } catch (error) {
+            customError.createError({
+                name: "Error al obtener los productos de prueba",
+                cause: dataBaseError(error),
+                message: "Ocurrio un error en el servidor",
+                code: EError.DATABASE_ERROR
+            })
+        }
+    }
+
 }
 
 export default new ProductsRepository()

@@ -1,7 +1,6 @@
 import EError from "../errors/num.js";
 
 export default(error, req, res, next) => {
-    console.log(error);
     switch (error.code) {
         case EError.NOT_FOUND:
             res.send({status: 'error', error: error.name, code: error.code, message: error.message, cause: error.cause})

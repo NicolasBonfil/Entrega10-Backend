@@ -83,6 +83,18 @@ class ProductController{
             next(error)
         }
     }
+
+    async mockingProducts(req, res, next) {
+        try {
+            const total = req.query.total || 100
+            let result = await productRepository.mockingProducts(total)
+            const response = successResponse(result)
+            res.status(HTTP_STATUS.OK).send(response)
+        } catch (error) {
+            next(error)
+        }
+    }
+
 }
 
 export default new ProductController()
